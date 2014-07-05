@@ -1,0 +1,21 @@
+description     "redis agent"
+
+start on (net-device-up
+          and local-filesystems
+          and runlevel [2345])
+
+stop on runlevel [016]
+
+respawn
+respawn limit 10 30
+
+# NB: Upstart scripts do not respect
+# /etc/security/limits.conf, so the open-file limits
+# settings need to be applied here.
+limit nofile 32000 32000
+
+console log
+
+script
+  exec sudo <%= @destination %>/redis-<%= @version %>/src/redis-server
+end script
